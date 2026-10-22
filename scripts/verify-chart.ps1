@@ -20,3 +20,7 @@ foreach ($invalidSetting in @('replicaCount=0', 'app.ready=not-a-boolean', 'imag
     Write-Output "PASS schema rejected $invalidSetting"
 }
 Write-Output 'Chart lint, rendering, and three invalid-value checks passed.'
+# GitHub's pwsh wrapper propagates LASTEXITCODE; the last Helm failure above is expected.
+exit 0
+# GitHub's pwsh wrapper propagates LASTEXITCODE; the last Helm failure above is expected.
+exit 0

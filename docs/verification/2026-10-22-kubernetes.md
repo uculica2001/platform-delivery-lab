@@ -31,6 +31,8 @@ Local releases were left installed for owner inspection. The existing standalone
 
 The workflow includes a separate `Helm and Kubernetes checks` job that creates and removes its own cluster on the runner. Actual run results are linked in [PR #1](https://github.com/uculica2001/platform-delivery-lab/pull/1) and the repository's Actions page; the local results above do not establish the CI conclusion.
 
+The [first Kubernetes CI attempt](https://github.com/uculica2001/platform-delivery-lab/actions/runs/39779269143) passed lint/rendering and all three schema rejection checks but failed the step afterward: GitHub's PowerShell wrapper propagated the last expected nonzero Helm exit code. The verifier now exits explicitly with zero only after all assertions pass; unexpected outcomes still throw. A child-shell check reproducing the wrapper's exit-code propagation verifies that correction before the next CI run.
+
 ## Reproduce and limitations
 
 Follow [the Kubernetes walkthrough](../kubernetes-lab.md). No host Python installation is needed. The application image supplies Python for in-cluster requests.

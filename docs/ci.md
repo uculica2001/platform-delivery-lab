@@ -2,7 +2,7 @@
 
 The [CI workflow](../.github/workflows/ci.yml) runs on pull requests targeting `main` and pushes to `main`. Each run uses a fresh GitHub-hosted `ubuntu-24.04` runner. Updates to the same pull request cancel older in-progress runs.
 
-## Checks
+## Application and container checks
 
 1. Record Docker and PowerShell versions in the run log.
 2. Build the Docker `test` target.
@@ -13,18 +13,26 @@ The [CI workflow](../.github/workflows/ci.yml) runs on pull requests targeting `
 
 The scripts receive the CI image explicitly through `-Image`. Docker executable discovery in the fault-injection harness uses the native application path rather than a Windows-specific filename.
 
+## Helm and Kubernetes checks
+
+A separate job installs pinned, checksum-verified kind, Helm, and kubectl binaries into `work/tools`. It lints and renders both chart configurations, rejects three invalid value sets, builds the runtime image, creates a one-node kind cluster, and imports the image into that cluster.
+
+The job installs development and staging releases in namespaces enforcing restricted Pod Security. It verifies one/two ready replicas, Service endpoints, four HTTP responses through Service DNS, and runtime constraints. The reported application version includes the tested checkout SHA (the merge commit for pull-request runs). See [the Kubernetes walkthrough](kubernetes-lab.md).
+
+On failure the job prints Kubernetes diagnostics and attempts to collect kind logs. Its final `always()` step deletes the CI cluster. Application/container checks and Kubernetes checks are independent jobs; both need a successful conclusion to call the complete run successful.
+
 ## Execution and access
 
-- The job has a 15-minute timeout.
+- Application/container checks have a 15-minute timeout; Kubernetes checks have a 20-minute timeout.
 - Its GitHub token has `contents: read` permission.
 - The checkout action is pinned to the full commit SHA for v7.0.1 and does not persist credentials in the checkout.
 - Pull request code runs under the ordinary `pull_request` event.
-- Images are built and exercised inside the runner; this stage does not publish images or deploy infrastructure.
+- Images and the disposable Kubernetes cluster stay inside the runner; this stage does not publish images or deploy to an external cluster.
 - Standard GitHub-hosted runners are free for public repositories according to [GitHub's runner documentation](https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job).
 
 ## Inspect a result
 
-Open the pull request's **Checks** tab and select **Application and container checks**, or open the repository's [CI runs](https://github.com/uculica2001/platform-delivery-lab/actions/workflows/ci.yml). Expand individual steps to inspect actual test output and fault-injection results.
+Open the pull request's **Checks** tab and select **Application and container checks** or **Helm and Kubernetes checks**, or open the repository's [CI runs](https://github.com/uculica2001/platform-delivery-lab/actions/workflows/ci.yml). Expand individual steps to inspect actual output.
 
 A workflow definition alone does not establish that a run passed; use the run's commit, conclusion, and logs as evidence. Branch protection has not yet been configured to require the check before merging.
 

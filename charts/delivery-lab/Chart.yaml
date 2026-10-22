@@ -1,0 +1,7 @@
+apiVersion: v2
+name: delivery-lab
+description: A small Flask service for practicing Kubernetes delivery
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+kubeVersion: ">=1.35.0-0 <1.38.0-0"

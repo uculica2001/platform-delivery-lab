@@ -1,0 +1,11 @@
+# Two replicas exercise rollout behavior; one local node is not high availability.
+replicaCount: 2
+app:
+  environment: staging
+resources:
+  requests:
+    cpu: 200m
+    memory: 96Mi
+  limits:
+    cpu: "1"
+    memory: 192Mi

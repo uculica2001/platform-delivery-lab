@@ -8,7 +8,9 @@ The first application and container milestone is implemented and locally verifie
 
 The [GitHub Actions workflow](docs/ci.md) automates the application/container checks and fault-injection scenarios. Actual run results are available under Checks on the pull request.
 
-Kubernetes, Helm deployment, release exercises, and the seeded-defect multi-model experiment are planned stages, not completed capabilities.
+The [local Kubernetes and Helm lab](docs/kubernetes-lab.md) deploys development and staging releases to a dedicated kind cluster. Local verification covers rollout readiness, Service requests, runtime constraints, and one/two ready replicas. The CI workflow includes a separate Kubernetes job; consult the PR checks for its actual result.
+
+Release/patch recovery exercises and the seeded-defect multi-model experiment remain planned stages.
 
 ## Purpose
 

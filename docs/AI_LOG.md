@@ -13,6 +13,15 @@ Record substantial proposals and changes, the owner's decision, and verification
 | 2026-10-22 | Claude and DeepSeek, independently reviewed frozen snapshot 7f61c43 | PowerShell compatibility, lost startup logs, cleanup false-success, readiness test gaps, and stronger runtime-constraint checks | Findings were reproduced before changes. Native Docker capture and lifecycle cleanup were corrected; 13 tests pass, normalization mutation is rejected, and five failure-path probes pass. See docs/reviews/round-01/remediation.md for original responses and evidence. |
 | 2026-10-22 | Current OpenAI assistant | Added pull-request CI and portable Docker discovery for the fault-injection harness | Workflow uses a standard Ubuntu runner, pinned checkout, read-only contents permission, application/container checks, and five failure scenarios. Actual execution evidence is linked from the PR and Actions. |
 
+## Kubernetes milestone
+
+Earlier rows preserve the state observed at the time.
+
+- Date: 2026-10-22; current OpenAI assistant.
+- Contribution: Helm chart with dev/staging values and schema, pinned project-local tooling, isolated kind setup, deployment verification, CI Kubernetes job, and walkthrough.
+- Verification: both chart configurations lint/render; three invalid values rejected; local releases have one/two ready replicas and Service endpoints; Service HTTP and runtime constraint checks pass. Repeat reconciliation also passed. See `docs/verification/2026-10-22-kubernetes.md` and the actual CI run linked from the PR.
+- Remaining scope: controlled failed rollout/recovery, image publishing, security scanning, and the seeded-defect AI review pilot.
+
 ## Entry template
 
 - Date and model label shown in the interface:

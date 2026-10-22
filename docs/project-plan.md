@@ -72,8 +72,9 @@ Acceptance criteria:
 - Runtime image built successfully and passed the HTTP verification script in ready/unready modes, running as UID 10001 with a read-only root filesystem.
 - Personal GitHub connector identity confirmed as `uculica2001`; the owner selected public visibility.
 - Public repository `uculica2001/platform-delivery-lab` created. Source changes are tracked through the repository pull requests.
-- kubectl client v1.36.1 is available; no Kubernetes cluster has been validated.
-- Helm and kind were not found on the current Windows PATH; the Kubernetes stage still requires its own setup.
+- A dedicated kind v0.33.0 cluster with Kubernetes v1.36.4 is locally verified. Helm v4.3.1 and kubectl v1.36.4 are pinned project-local downloads; no system PATH or default kubeconfig change is needed.
+- Development and staging Helm releases pass rollout, Service HTTP, replica-count, and runtime-constraint checks. See [the Kubernetes walkthrough](kubernetes-lab.md) and [verification evidence](verification/2026-10-22-kubernetes.md).
+- GitHub Actions runs application/container validation and a separate Helm/Kubernetes job. Consult the actual PR checks for each run's conclusion.
 - The first independent Claude/DeepSeek development review is documented in [review round 01](reviews/round-01/remediation.md), including frozen inputs, original responses, verified findings, fixes, and five startup/cleanup failure-path checks.
 
 See [the verification record](verification/2026-10-22-container.md) for evidence and limits.

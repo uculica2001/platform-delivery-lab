@@ -1,0 +1,15 @@
+{
+  "kindVersion": "v0.33.0",
+  "helmVersion": "v4.3.1",
+  "kubectlVersion": "v1.36.4",
+  "windows": {
+    "kindSha256": "4b22adaa135368c5a465d56bbd8e520cbea87272a06ca00b6078e7b81515c9fc",
+    "helmSha256": "fcfd7b796dcf0f225abc40b5636a3b01f55f3de2fb1dfb18475df94e62c14112",
+    "kubectlSha256": "31947857be7583f3e4e6d889a3fb781ca813a45c20f11ccb3ef309714d01a9f3"
+  },
+  "linux": {
+    "kindSha256": "aee6151561422756b764a4ae28e7f44cda5af5a9eead3cc9985112b1de8d8e0d",
+    "helmSha256": "0403a88ae20913d11b10a2467b50087721fea7581736da6b9d3992f5357fe54b",
+    "kubectlSha256": "8b8f088da2dab964f853b38464033b1be15ede2839eca751482357c45abdd05a"
+  }
+}

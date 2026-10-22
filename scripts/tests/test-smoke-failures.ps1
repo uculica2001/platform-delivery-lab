@@ -1,5 +1,7 @@
+param([string]$Image = 'platform-delivery-lab:0.1.0')
+
 $ErrorActionPreference = 'Stop'
-$global:taskFixProbeDocker = (Get-Command docker.exe).Source
+$global:taskFixProbeDocker = (Get-Command docker -CommandType Application | Select-Object -First 1).Source
 $global:taskFixProbeIds = New-Object 'System.Collections.Generic.List[string]'
 $global:taskFixProbeMode = ''
 
@@ -40,7 +42,7 @@ foreach ($taskMode in @('StopFails', 'RemovalFails', 'ListingFails', 'StartupFai
     $taskError = $null
     try {
         try {
-            & (Join-Path $PSScriptRoot '..\..\scripts\verify-container.ps1') *>&1 | ForEach-Object { $taskOutput.Add($_.ToString()) }
+            & (Join-Path $PSScriptRoot '..\..\scripts\verify-container.ps1') -Image $Image *>&1 | ForEach-Object { $taskOutput.Add($_.ToString()) }
         }
         catch { $taskError = $_ }
         $taskText = $taskOutput -join "`n"
@@ -48,7 +50,9 @@ foreach ($taskMode in @('StopFails', 'RemovalFails', 'ListingFails', 'StartupFai
         $taskLogs = $taskText.Contains('APP_READY must be true or false')
         $taskCombined = $taskError -and $taskError.Exception.Message.Contains('Cleanup also failed:')
         if ($taskMode -eq 'StopFails') {
-            if ($taskError -or -not $taskSuccess) { throw 'Forced-removal fallback did not succeed' }
+            if ($taskError -or -not $taskSuccess) {
+                throw "Forced-removal fallback did not succeed. Error: $($taskError.Exception.Message). Output: $taskText"
+            }
         }
         else {
             if (-not $taskError -or $taskSuccess) { throw "Failure was incorrectly accepted: $taskMode" }

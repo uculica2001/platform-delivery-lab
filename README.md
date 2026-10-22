@@ -6,7 +6,9 @@ A personal DevOps portfolio lab for reproducible Kubernetes delivery and evidenc
 
 The first application and container milestone is implemented and locally verified. Thirteen application tests pass; HTTP checks cover healthy and intentionally unready instances running as a non-root user with a read-only root filesystem.
 
-Kubernetes, Helm deployment, GitHub Actions, release exercises, and the multi-model experiment are planned stages, not completed capabilities.
+The [GitHub Actions workflow](docs/ci.md) automates the application/container checks and fault-injection scenarios. Actual run results are available under Checks on the pull request.
+
+Kubernetes, Helm deployment, release exercises, and the seeded-defect multi-model experiment are planned stages, not completed capabilities.
 
 ## Purpose
 

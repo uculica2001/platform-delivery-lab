@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  application-and-container:
+    name: Application and container checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Report tool versions
+        shell: bash
+        run: |
+          docker version
+          pwsh -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
+
+      - name: Build test image
+        shell: bash
+        run: docker build --target test -t platform-delivery-lab:test .
+
+      - name: Run application tests without network access
+        shell: bash
+        run: docker run --rm --network none platform-delivery-lab:test
+
+      - name: Build runtime image
+        shell: bash
+        run: docker build --target runtime -t platform-delivery-lab:ci .
+
+      - name: Verify ready and unready containers
+        shell: pwsh
+        run: ./scripts/verify-container.ps1 -Image platform-delivery-lab:ci
+
+      - name: Verify startup and cleanup failure handling
+        shell: pwsh
+        run: ./scripts/tests/test-smoke-failures.ps1 -Image platform-delivery-lab:ci

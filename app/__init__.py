@@ -2,7 +2,7 @@
 
 import os
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 
 def create_app():
@@ -17,6 +17,12 @@ def create_app():
         APP_ENV=os.getenv("APP_ENV", "development"),
         APP_READY=ready == "true",
     )
+
+    @app.after_request
+    def prevent_cached_probe_responses(response):
+        if request.path in {"/healthz", "/readyz"}:
+            response.cache_control.no_store = True
+        return response
 
     @app.get("/")
     def index():

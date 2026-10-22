@@ -1,0 +1,130 @@
+{
+  "success": true,
+  "startedUtc": "2026-10-22T12:48:58.4029635Z",
+  "timeline": [
+    {
+      "phase": "baseline-release",
+      "utc": "2026-10-22T12:49:05.3480120Z",
+      "details": {
+        "version": "0.1.0",
+        "pods": [
+          "delivery-lab-5df6d6cb5-bvq4r",
+          "delivery-lab-5df6d6cb5-m99r8"
+        ]
+      }
+    },
+    {
+      "phase": "patch-release",
+      "utc": "2026-10-22T12:49:14.8767420Z",
+      "details": {
+        "version": "0.1.1",
+        "revision": 2,
+        "pods": [
+          "delivery-lab-69656b8b46-85frc",
+          "delivery-lab-69656b8b46-gqrdp"
+        ]
+      }
+    },
+    {
+      "phase": "expected-readiness-failure",
+      "utc": "2026-10-22T12:49:52.6929003Z",
+      "details": {
+        "candidate": "delivery-lab-56bfd595c9-ngl9p",
+        "readyServiceTargets": [
+          "delivery-lab-69656b8b46-85frc",
+          "delivery-lab-69656b8b46-gqrdp"
+        ],
+        "candidateRestarts": 0,
+        "exitCode": 1,
+        "output": "level=WARN msg=\"upgrade failed\" name=delivery-lab error=\"resource Deployment/lab-release/delivery-lab not ready. status: InProgress, message: Updated: 1/2\\ncontext deadline exceeded\"\nError: UPGRADE FAILED: resource Deployment/lab-release/delivery-lab not ready. status: InProgress, message: Updated: 1/2\ncontext deadline exceeded",
+        "elapsedSeconds": 35.6,
+        "revision": 3
+      }
+    },
+    {
+      "phase": "verified-rollback",
+      "utc": "2026-10-22T12:49:54.7415766Z",
+      "details": {
+        "version": "0.1.1",
+        "revision": 4,
+        "pods": [
+          "delivery-lab-69656b8b46-85frc",
+          "delivery-lab-69656b8b46-gqrdp"
+        ],
+        "restoredFromRevision": 2
+      }
+    }
+  ],
+  "images": [
+    {
+      "id": "sha256:3c4eca0af3f3ef2496a664b70b9a1b4c04e1366f0ffda7ac95a5c0029624d6d4",
+      "tags": [
+        "platform-delivery-lab:release-0.1.0"
+      ],
+      "labels": {
+        "org.opencontainers.image.revision": "bd9cec24bfc7272714f187da4864adc748327780",
+        "org.opencontainers.image.version": "0.1.0"
+      }
+    },
+    {
+      "id": "sha256:d23be7a935771f05abdcfa889e5491a40b43542ec2e98dbf2c3b56cf2e59dc31",
+      "tags": [
+        "platform-delivery-lab:patch-0.1.1"
+      ],
+      "labels": {
+        "org.opencontainers.image.revision": "bd9cec24bfc7272714f187da4864adc748327780-dirty",
+        "org.opencontainers.image.version": "0.1.1"
+      }
+    }
+  ],
+  "knownGoodRevision": 2,
+  "expectedFailure": {
+    "candidate": "delivery-lab-56bfd595c9-ngl9p",
+    "readyServiceTargets": [
+      "delivery-lab-69656b8b46-85frc",
+      "delivery-lab-69656b8b46-gqrdp"
+    ],
+    "candidateRestarts": 0,
+    "exitCode": 1,
+    "output": "level=WARN msg=\"upgrade failed\" name=delivery-lab error=\"resource Deployment/lab-release/delivery-lab not ready. status: InProgress, message: Updated: 1/2\\ncontext deadline exceeded\"\nError: UPGRADE FAILED: resource Deployment/lab-release/delivery-lab not ready. status: InProgress, message: Updated: 1/2\ncontext deadline exceeded",
+    "elapsedSeconds": 35.6,
+    "revision": 3
+  },
+  "recoveredRevision": 4,
+  "history": [
+    {
+      "revision": 1,
+      "updated": "2026-10-22T15:49:00.8679614+03:00",
+      "status": "superseded",
+      "chart": "delivery-lab-0.1.0",
+      "app_version": "0.1.0",
+      "description": "Install complete"
+    },
+    {
+      "revision": 2,
+      "updated": "2026-10-22T15:49:05.5476474+03:00",
+      "status": "superseded",
+      "chart": "delivery-lab-0.1.0",
+      "app_version": "0.1.0",
+      "description": "Upgrade complete"
+    },
+    {
+      "revision": 3,
+      "updated": "2026-10-22T15:49:15.1758035+03:00",
+      "status": "failed",
+      "chart": "delivery-lab-0.1.0",
+      "app_version": "0.1.0",
+      "description": "Upgrade \"delivery-lab\" failed: resource Deployment/lab-release/delivery-lab not ready. status: InProgress, message: Updated: 1/2\ncontext deadline exceeded"
+    },
+    {
+      "revision": 4,
+      "updated": "2026-10-22T15:49:52.8341313+03:00",
+      "status": "deployed",
+      "chart": "delivery-lab-0.1.0",
+      "app_version": "0.1.0",
+      "rollback_revision": 2,
+      "description": "Rollback to 2"
+    }
+  ],
+  "finishedUtc": "2026-10-22T12:49:54.8888293Z"
+}

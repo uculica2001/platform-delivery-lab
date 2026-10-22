@@ -46,7 +46,7 @@ The node image is Kubernetes v1.36.4 and is pinned by digest in `kind/cluster.ya
 
 Development requests 100m CPU and 64Mi memory per pod, with 500m/128Mi limits. Staging requests 200m/96Mi per pod, with 1 CPU/192Mi limits. These are learning defaults, not capacity measurements. Two staging replicas demonstrate replica and rollout behavior; both share one node and do not provide node-level high availability. Namespaces separate names and releases but do not enforce network isolation.
 
-Startup and liveness probes use `/healthz`. Readiness uses `/readyz`. This distinction allows a healthy process to be deliberately unready without requesting a restart. The application's readiness flag is read at startup; changing it through Helm creates replacement pods. The controlled failed-rollout and recovery exercise is a later milestone.
+Startup and liveness probes use `/healthz`. Readiness uses `/readyz`. This distinction allows a healthy process to be deliberately unready without requesting a restart. The application's readiness flag is read at startup; changing it through Helm creates replacement pods. The separate [release/recovery exercise](runbooks/release-recovery.md) demonstrates this behavior in `lab-release`.
 
 Rolling updates allow one extra pod and keep all desired replicas available while replacement pods become ready (`maxSurge: 1`, `maxUnavailable: 0`). This requires spare capacity; the lab has not established production availability guarantees.
 

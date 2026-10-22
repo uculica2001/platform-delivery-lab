@@ -22,6 +22,13 @@ Earlier rows preserve the state observed at the time.
 - Verification: both chart configurations lint/render; three invalid values rejected; local releases have one/two ready replicas and Service endpoints; Service HTTP and runtime constraint checks pass. Repeat reconciliation also passed. See `docs/verification/2026-10-22-kubernetes.md` and the actual CI run linked from the PR.
 - Remaining scope: controlled failed rollout/recovery, image publishing, security scanning, and the seeded-defect AI review pilot.
 
+## Release and recovery milestone
+
+- Date: 2026-10-22; current OpenAI assistant.
+- Contribution: real probe cache-header patch, four regression cases, builds from frozen/current source, an isolated failure/recovery exercise, CI integration, runbook, and simulated incident report.
+- Verification: 17 tests passed; baseline and patch deployed; matching Python package versions confirmed; the intentional readiness rollout timed out after 35.60 seconds; the candidate remained alive and excluded from ready Service endpoints; sampled Service requests passed; rollback from failed revision 3 to good revision 2 created healthy revision 4. See the frozen local result and incident report. CI evidence is recorded in the actual PR run.
+- Limits: sampled local traffic and single-node operation; no zero-downtime or production recovery-time claim. The independent AI pilot remains separate future work.
+
 ## Entry template
 
 - Date and model label shown in the interface:

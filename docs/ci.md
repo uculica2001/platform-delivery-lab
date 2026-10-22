@@ -21,6 +21,8 @@ The job installs development and staging releases in namespaces enforcing restri
 
 On failure the job prints Kubernetes diagnostics and attempts to collect kind logs. Its final `always()` step deletes the CI cluster. Application/container checks and Kubernetes checks are independent jobs; both need a successful conclusion to call the complete run successful.
 
+The Kubernetes job also builds distinct baseline/patch images and, after the normal dev/staging gate, runs the [release/recovery exercise](runbooks/release-recovery.md) in `lab-release`. Full history is fetched for this job so it can build the baseline from its frozen Git commit. The exercise requires a specific readiness timeout, verifies Service isolation and sampled responses, then performs and verifies Helm rollback. Unexpected failures remain job failures. Image IDs and the timestamped result summary appear in the job log.
+
 ## Execution and access
 
 - Application/container checks have a 15-minute timeout; Kubernetes checks have a 20-minute timeout.

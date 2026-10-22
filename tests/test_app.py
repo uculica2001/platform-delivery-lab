@@ -68,3 +68,11 @@ def test_application_instances_have_separate_configuration(monkeypatch):
     second = create_app().test_client()
     assert first.get("/version").get_json()["version"] == "1.0.0"
     assert second.get("/version").get_json()["version"] == "1.0.1"
+
+
+@pytest.mark.parametrize("ready", ["true", "false"])
+@pytest.mark.parametrize("path", ["/healthz", "/readyz"])
+def test_probe_responses_must_not_be_stored(monkeypatch, ready, path):
+    monkeypatch.setenv("APP_READY", ready)
+    response = create_app().test_client().get(path)
+    assert response.cache_control.no_store is True

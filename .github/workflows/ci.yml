@@ -59,6 +59,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Install checksum-verified lab tools
         shell: pwsh
@@ -71,6 +72,10 @@ jobs:
       - name: Build runtime image
         run: docker build --target runtime -t platform-delivery-lab:ci .
 
+      - name: Build distinct baseline and patch release images
+        shell: pwsh
+        run: ./scripts/build-release-images.ps1
+
       - name: Create isolated Kubernetes cluster
         shell: pwsh
         run: ./scripts/create-local-cluster.ps1
@@ -81,6 +86,10 @@ jobs:
       - name: Verify dev and staging Helm deployments
         shell: pwsh
         run: ./scripts/verify-kubernetes.ps1 -ImageTag ci -AppVersion "ci-${{ github.sha }}"
+
+      - name: Exercise expected rollout failure and verified Helm recovery
+        shell: pwsh
+        run: ./scripts/exercise-release-recovery.ps1 -RunFailureExercise
 
       - name: Collect cluster diagnostics on failure
         if: failure()

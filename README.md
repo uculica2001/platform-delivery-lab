@@ -4,13 +4,15 @@ A personal DevOps portfolio lab for reproducible Kubernetes delivery and evidenc
 
 ## Status
 
-The first application and container milestone is implemented and locally verified. Thirteen application tests pass; HTTP checks cover healthy and intentionally unready instances running as a non-root user with a read-only root filesystem.
+The application and container milestone is implemented and locally verified. Seventeen application tests pass; HTTP checks cover healthy and intentionally unready instances running as a non-root user with a read-only root filesystem. The patch adds non-cacheable health/readiness responses.
 
 The [GitHub Actions workflow](docs/ci.md) automates the application/container checks and fault-injection scenarios. Actual run results are available under Checks on the pull request.
 
 The [local Kubernetes and Helm lab](docs/kubernetes-lab.md) deploys development and staging releases to a dedicated kind cluster. Local verification covers rollout readiness, Service requests, runtime constraints, and one/two ready replicas. The CI workflow includes a separate Kubernetes job; consult the PR checks for its actual result.
 
-Release/patch recovery exercises and the seeded-defect multi-model experiment remain planned stages.
+The [release and recovery exercise](docs/runbooks/release-recovery.md) uses distinct baseline/patch images and an isolated namespace to demonstrate a readiness configuration failure and verified Helm rollback. See [the simulated incident report](docs/incidents/2026-10-22-readiness-rollout.md) and actual PR checks for evidence.
+
+The seeded-defect multi-model experiment remains a planned stage.
 
 ## Purpose
 

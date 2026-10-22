@@ -38,11 +38,27 @@ def test_version_reports_deployment_configuration(monkeypatch):
     assert response.get_json() == {"version": "1.2.3", "environment": "staging"}
 
 
-@pytest.mark.parametrize("value", ["yes", "1", ""])
+@pytest.mark.parametrize("value", ["yes", "1", "", " yes "])
 def test_invalid_readiness_configuration_fails_at_startup(monkeypatch, value):
     monkeypatch.setenv("APP_READY", value)
     with pytest.raises(ValueError, match="APP_READY must be true or false"):
         create_app()
+
+
+@pytest.mark.parametrize(
+    "value,status,body",
+    [
+        (" true ", 200, {"status": "ready"}),
+        ("TRUE", 200, {"status": "ready"}),
+        (" False ", 503, {"status": "not_ready"}),
+        ("FaLsE", 503, {"status": "not_ready"}),
+    ],
+)
+def test_readiness_configuration_normalization(monkeypatch, value, status, body):
+    monkeypatch.setenv("APP_READY", value)
+    response = create_app().test_client().get("/readyz")
+    assert response.status_code == status
+    assert response.get_json() == body
 
 
 def test_application_instances_have_separate_configuration(monkeypatch):

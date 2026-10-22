@@ -10,6 +10,7 @@ Record substantial proposals and changes, the owner's decision, and verification
 | 2026-10-22 | Current OpenAI assistant | Copied startup documents into the project and rechecked Docker after the owner started it | File copies verified by SHA-256. Docker engine access denied in the restricted session; verification in the owner terminal is pending. |
 | 2026-10-22 | Current OpenAI assistant | Implemented the Flask application, container targets, tests, and PowerShell smoke check | Eight tests passed; ready/unready HTTP checks passed with UID 10001 and a read-only root filesystem. See the verification record. Owner selected a public repository; GitHub account verified and repository created. |
 | 2026-10-22 | Current OpenAI assistant | Found and fixed a Gunicorn control-socket write error during the walkthrough | Disabled the unused control interface. Extended smoke checks to inspect logs; the original image failed and the rebuilt image passed ready/unready checks. |
+| 2026-10-22 | Claude and DeepSeek, independently reviewed frozen snapshot 7f61c43 | PowerShell compatibility, lost startup logs, cleanup false-success, readiness test gaps, and stronger runtime-constraint checks | Findings were reproduced before changes. Native Docker capture and lifecycle cleanup were corrected; 13 tests pass, normalization mutation is rejected, and five failure-path probes pass. See docs/reviews/round-01/remediation.md for original responses and evidence. |
 
 ## Entry template
 

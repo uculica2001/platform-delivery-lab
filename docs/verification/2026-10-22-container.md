@@ -48,6 +48,16 @@ The updated runtime image is `sha256:6d97e72211d16f1a9e0ff9dc41a151a14819c490103
 
 The application code and pytest cases were unchanged; the relevant runtime checks were repeated for the configuration fix.
 
+## Follow-up: independent AI review remediation
+
+After Claude and DeepSeek reviewed source snapshot `7f61c43`, the application tests and smoke script were strengthened. The current suite has **13 passing tests**; removing readiness normalization in a disposable test container now produces **4 failures and 9 passes**.
+
+The revised smoke script passed ready/unready HTTP checks, UID/GID and ReadonlyRootfs checks, log checks, and explicit removal confirmation. Five injected startup/cleanup failure scenarios passed their expected outcomes, including preserving startup diagnostics and reporting combined application/cleanup failures.
+
+Full Docker verification ran under PowerShell 7.6.5. Windows PowerShell 5.1 parsing and inline native-capture checks passed, but full script execution remains blocked by its existing execution policy. No policy was changed.
+
+See the [complete remediation record](../reviews/round-01/remediation.md) for original reviews, decisions, detailed results, limits, and reproduction commands. Historical results earlier in this document refer to the prior snapshots.
+
 ## Limits
 
 - No Kubernetes deployment or CI run has been performed.

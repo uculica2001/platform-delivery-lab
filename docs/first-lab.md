@@ -9,6 +9,7 @@
 - `Dockerfile`: separates dependency installation, testing, and the runtime image.
 - `.dockerignore`: only sends the application, tests, and dependency files to the build.
 - `scripts/verify-container.ps1`: checks the running image in ready and unready modes and cleans up its temporary containers.
+- `scripts/tests/test-smoke-failures.ps1`: exercises startup and cleanup failures against the actual smoke script in disposable containers.
 
 Flask is a small HTTP framework; Gunicorn serves the application in the Linux container. The first version has no database or external API.
 
@@ -46,7 +47,11 @@ Invoke-RestMethod http://127.0.0.1:8080/version
 
 Expected: health status `ok`, readiness status `ready`, version `0.1.0`, environment `dev`. Use Ctrl+C in the first terminal to stop the container.
 
-Alternatively, after building the runtime image, run `.\scripts\verify-container.ps1` to check both ready and unready behavior automatically. This script verifies response bodies and status codes, checks UID 10001, rejects ERROR/CRITICAL log messages and Python tracebacks, and stops its temporary containers. Review it before running; local PowerShell script execution must be allowed by your existing policy.
+Alternatively, after building the runtime image, run `.\scripts\verify-container.ps1` to check both ready and unready behavior automatically. This script verifies response bodies and status codes, UID/GID 10001, and Docker's read-only root configuration. It rejects ERROR/CRITICAL log messages and Python tracebacks. Containers are created without auto-removal so startup logs can be collected before explicit cleanup. The script confirms removal before reporting success.
+
+The Docker helper captures stderr under a locally scoped error preference and checks Docker's exit code, avoiding premature termination on Windows PowerShell 5.1. Full Docker verification ran under PowerShell 7.6.5; 5.1 parsing and the capture pattern were checked, while its full script run remains blocked by the existing execution policy. Review scripts before running; local script execution must already be allowed by your policy.
+
+Run `.\scripts\tests\test-smoke-failures.ps1` for five disposable startup/cleanup fault-injection checks. The harness removes its own containers in a final teardown. See the [review remediation record](reviews/round-01/remediation.md) for evidence.
 
 For a controlled unready instance, stop the previous container and repeat the run command with `-e APP_READY=false`. Health should remain 200 and readiness should return 503; PowerShell reports non-success HTTP responses as errors.
 

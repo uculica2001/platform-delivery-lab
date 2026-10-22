@@ -4,7 +4,7 @@ A personal DevOps portfolio lab for reproducible Kubernetes delivery and evidenc
 
 ## Status
 
-The first application and container milestone is implemented and locally verified. Eight application tests pass; HTTP checks cover healthy and intentionally unready instances running as a non-root user with a read-only root filesystem.
+The first application and container milestone is implemented and locally verified. Thirteen application tests pass; HTTP checks cover healthy and intentionally unready instances running as a non-root user with a read-only root filesystem.
 
 Kubernetes, Helm deployment, GitHub Actions, release exercises, and the multi-model experiment are planned stages, not completed capabilities.
 
@@ -54,6 +54,10 @@ For an automated container smoke check from PowerShell:
 .\scripts\verify-container.ps1
 ```
 
-The script starts two temporary containers on dynamically assigned loopback ports, verifies HTTP status and JSON fields, checks UID 10001 and runtime logs for errors, then stops the containers. Your PowerShell execution policy must allow local scripts; review the script before running it.
+The script creates and starts temporary containers on dynamically assigned loopback ports, verifies HTTP responses, UID/GID 10001, read-only root configuration, and runtime logs, then explicitly removes the containers and confirms their absence. Failed startup logs are collected before removal. Your PowerShell execution policy must allow local scripts; review the script before running it.
+
+Full Docker verification has run under PowerShell 7.6.5. Windows PowerShell 5.1 syntax and the native-output capture pattern have been checked; full script execution there remains blocked by the existing execution policy and is not claimed as verified.
+
+The [independent Claude/DeepSeek review and remediation record](docs/reviews/round-01/remediation.md) preserves the input, original responses, findings, and verification evidence. To reproduce the cleanup/startup failure-path checks, run `.\scripts\tests\test-smoke-failures.ps1` after building the runtime image.
 
 See [the verification record](docs/verification/2026-10-22-container.md) for the actual local results and remaining limits.

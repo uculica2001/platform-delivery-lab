@@ -68,12 +68,13 @@ Acceptance criteria:
 - Git: 2.42.0.windows.2.
 - Docker Desktop 4.90.0, client/engine 29.7.2, context `desktop-linux`, Linux amd64 engine.
 - First execution approach: PowerShell commands and Linux containers; a host Python installation and direct WSL shell access are not required for this milestone.
-- Eight application tests passed inside the test image.
+- Thirteen application tests passed inside the test image after independent AI review; removing readiness normalization causes four test failures.
 - Runtime image built successfully and passed the HTTP verification script in ready/unready modes, running as UID 10001 with a read-only root filesystem.
 - Personal GitHub connector identity confirmed as `uculica2001`; the owner selected public visibility.
 - Public repository `uculica2001/platform-delivery-lab` created. Source changes are tracked through the repository pull requests.
 - kubectl client v1.36.1 is available; no Kubernetes cluster has been validated.
 - Helm and kind were not found on the current Windows PATH; the Kubernetes stage still requires its own setup.
+- The first independent Claude/DeepSeek development review is documented in [review round 01](reviews/round-01/remediation.md), including frozen inputs, original responses, verified findings, fixes, and five startup/cleanup failure-path checks.
 
 See [the verification record](verification/2026-10-22-container.md) for evidence and limits.
 

@@ -54,6 +54,6 @@ For an automated container smoke check from PowerShell:
 .\scripts\verify-container.ps1
 ```
 
-The script starts two temporary containers on dynamically assigned loopback ports, verifies HTTP status and JSON fields, checks UID 10001, then stops the containers. Your PowerShell execution policy must allow local scripts; review the script before running it.
+The script starts two temporary containers on dynamically assigned loopback ports, verifies HTTP status and JSON fields, checks UID 10001 and runtime logs for errors, then stops the containers. Your PowerShell execution policy must allow local scripts; review the script before running it.
 
 See [the verification record](docs/verification/2026-10-22-container.md) for the actual local results and remaining limits.

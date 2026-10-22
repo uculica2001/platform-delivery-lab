@@ -60,6 +60,14 @@ try {
             else {
                 Assert-Response "$baseUrl/readyz" 503 @{ status = 'not_ready' }
             }
+
+            $containerLogs = docker logs $containerName 2>&1 | Out-String
+            if ($LASTEXITCODE -ne 0) { throw 'Could not read container logs' }
+            if ($containerLogs -match '\[(ERROR|CRITICAL)\]|Traceback \(most recent call last\)') {
+                Write-Output $containerLogs
+                throw 'Application served requests but reported a runtime error in its logs'
+            }
+            Write-Output 'PASS no runtime errors found in container logs'
         }
         finally {
             if ($containerId) {

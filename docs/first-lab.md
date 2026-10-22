@@ -12,6 +12,8 @@
 
 Flask is a small HTTP framework; Gunicorn serves the application in the Linux container. The first version has no database or external API.
 
+Gunicorn starts with `--no-control-socket`. This lab does not use its optional runtime control interface. Disabling it avoids an attempted write under the service user's home directory when the root filesystem is read-only. See the [Gunicorn control settings](https://gunicorn.org/reference/settings/#control).
+
 ## Endpoint contract
 
 | Endpoint | Success | Purpose |
@@ -44,7 +46,7 @@ Invoke-RestMethod http://127.0.0.1:8080/version
 
 Expected: health status `ok`, readiness status `ready`, version `0.1.0`, environment `dev`. Use Ctrl+C in the first terminal to stop the container.
 
-Alternatively, after building the runtime image, run `.\scripts\verify-container.ps1` to check both ready and unready behavior automatically. This script verifies response bodies and status codes, checks UID 10001, and stops its temporary containers. Review it before running; local PowerShell script execution must be allowed by your existing policy.
+Alternatively, after building the runtime image, run `.\scripts\verify-container.ps1` to check both ready and unready behavior automatically. This script verifies response bodies and status codes, checks UID 10001, rejects ERROR/CRITICAL log messages and Python tracebacks, and stops its temporary containers. Review it before running; local PowerShell script execution must be allowed by your existing policy.
 
 For a controlled unready instance, stop the previous container and repeat the run command with `-e APP_READY=false`. Health should remain 200 and readiness should return 503; PowerShell reports non-success HTTP responses as errors.
 

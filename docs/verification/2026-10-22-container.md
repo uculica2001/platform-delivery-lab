@@ -36,6 +36,18 @@ sha256:c018ab96b8ee1f6fa97a35f0707e2d8f386101185fe76a6056598ee423925528
 
 Response JSON fields were checked as well as status codes. Version/environment overrides were returned correctly. Both temporary containers were stopped by the script.
 
+## Follow-up: startup log inspection
+
+During the interactive walkthrough, HTTP endpoints responded successfully but the initial Gunicorn configuration logged `Control server error: [Errno 30] Read-only file system: '/home/service'`. The first smoke check inspected HTTP behavior but did not inspect successful-startup logs.
+
+The optional Gunicorn control interface is not used by this lab. Adding `--no-control-socket` to the runtime command avoids its attempt to create a control socket under the service user's home directory. The non-root user and read-only filesystem remain enabled. Reference: [Gunicorn control settings](https://gunicorn.org/reference/settings/#control).
+
+The smoke script now rejects ERROR/CRITICAL log entries and Python tracebacks observed during the checks. It failed against the original image despite successful HTTP responses, reproducing the issue. After rebuilding, both ready and unready scenarios passed all HTTP, UID, and log checks. Temporary test containers were stopped.
+
+The updated runtime image is `sha256:6d97e72211d16f1a9e0ff9dc41a151a14819c490103279649448cd876164c0bf`. During this rebuild the mutable Python tag resolved to `sha256:57b29a7c050c4e679e4bea572e14b3965cf4b5839de2da49d55e49ffc4024f39`; digest pinning remains a future hardening task. This does not change the historical results above.
+
+The application code and pytest cases were unchanged; the relevant runtime checks were repeated for the configuration fix.
+
 ## Limits
 
 - No Kubernetes deployment or CI run has been performed.

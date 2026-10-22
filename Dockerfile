@@ -29,4 +29,4 @@ COPY --from=dependencies /opt/venv /opt/venv
 COPY app/ app/
 USER 10001:10001
 EXPOSE 8080
-CMD ["gunicorn", "--bind=0.0.0.0:8080", "--workers=2", "--worker-tmp-dir=/tmp", "--access-logfile=-", "--error-logfile=-", "app:create_app()"]
+CMD ["gunicorn", "--bind=0.0.0.0:8080", "--workers=2", "--worker-tmp-dir=/tmp", "--no-control-socket", "--access-logfile=-", "--error-logfile=-", "app:create_app()"]

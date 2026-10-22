@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  application-and-container:
+    name: Application and container checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Report tool versions
+        shell: bash
+        run: |
+          docker version
+          pwsh -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
+
+      - name: Build test image
+        shell: bash
+        run: docker build --target test -t platform-delivery-lab:test .
+
+      - name: Run application tests without network access
+        shell: bash
+        run: docker run --rm --network none platform-delivery-lab:test
+
+      - name: Build runtime image
+        shell: bash
+        run: docker build --target runtime -t platform-delivery-lab:ci .
+
+      - name: Verify ready and unready containers
+        shell: pwsh
+        run: ./scripts/verify-container.ps1 -Image platform-delivery-lab:ci
+
+      - name: Verify startup and cleanup failure handling
+        shell: pwsh
+        run: ./scripts/tests/test-smoke-failures.ps1 -Image platform-delivery-lab:ci
+
+  helm-and-kubernetes:
+    name: Helm and Kubernetes checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Install checksum-verified lab tools
+        shell: pwsh
+        run: ./scripts/install-local-tools.ps1
+
+      - name: Lint chart and reject invalid values
+        shell: pwsh
+        run: ./scripts/verify-chart.ps1
+
+      - name: Build runtime image
+        run: docker build --target runtime -t platform-delivery-lab:ci .
+
+      - name: Build distinct baseline and patch release images
+        shell: pwsh
+        run: ./scripts/build-release-images.ps1
+
+      - name: Create isolated Kubernetes cluster
+        shell: pwsh
+        run: ./scripts/create-local-cluster.ps1
+
+      - name: Load runtime image into cluster
+        run: ./work/tools/kind load docker-image platform-delivery-lab:ci --name platform-delivery-lab
+
+      - name: Verify dev and staging Helm deployments
+        shell: pwsh
+        run: ./scripts/verify-kubernetes.ps1 -ImageTag ci -AppVersion "ci-${{ github.sha }}"
+
+      - name: Exercise expected rollout failure and verified Helm recovery
+        shell: pwsh
+        run: ./scripts/exercise-release-recovery.ps1 -RunFailureExercise
+
+      - name: Collect cluster diagnostics on failure
+        if: failure()
+        shell: bash
+        run: |
+          if [ -f work/kubeconfig ] && [ -x work/tools/kubectl ]; then
+            ./work/tools/kubectl --kubeconfig work/kubeconfig --context kind-platform-delivery-lab get pods -A -o wide || true
+            ./work/tools/kubectl --kubeconfig work/kubeconfig --context kind-platform-delivery-lab get events -A --sort-by=.metadata.creationTimestamp || true
+          fi
+          if [ -x work/tools/kind ]; then
+            ./work/tools/kind export logs work/kind-logs --name platform-delivery-lab || true
+            find work/kind-logs -name kubelet.log -exec tail -n 80 {} \; || true
+          fi
+
+      - name: Remove CI cluster
+        if: always()
+        run: |
+          if [ -x work/tools/kind ]; then
+            ./work/tools/kind delete cluster --name platform-delivery-lab
+          fi

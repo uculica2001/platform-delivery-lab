@@ -1,0 +1,4 @@
+# A small local development footprint.
+replicaCount: 1
+app:
+  environment: dev
